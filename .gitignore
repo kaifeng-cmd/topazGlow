@@ -1,0 +1,6 @@
+venv/
+.gradio/
+*.onnx
+modelCARD.md
+onnxUploader.py
+.env
