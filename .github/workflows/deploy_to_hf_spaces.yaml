@@ -1,33 +1,39 @@
+# Name of the GitHub Actions workflow
 name: CI/CD to Hugging Face Spaces
 
+# Trigger the workflow on a push event to the main branch
 on:
   push:
     branches:
       - main
 
+# Define the jobs to be run
 jobs:
   test-and-deploy:
+    # Use the latest Ubuntu runner
     runs-on: ubuntu-latest
 
+    # Define the sequence of steps for the job
     steps:
-      # Checkout code
-      - name: Checkout repos
+      # Step 1: Check out the repository's code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Set up Python
+      # Step 2: Set up the specified Python version
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      # Install dependencies
+      # Step 3: Install project dependencies from requirements.txt
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Run unit testing
+      # Step 4: Run unit tests using pytest
       - name: Run tests
+        # Provide secrets as environment variables for the tests
         env:
           DATABRICKS_URL: ${{ secrets.DATABRICKS_URL }}
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
@@ -36,23 +42,34 @@ jobs:
           pytest tests/ -v --tb=short
           echo "✅ All tests passed!"
 
-      # Test app starting
+      # Step 5: Test if the application can start without crashing
       - name: Test app startup
+        env:
+          DATABRICKS_URL: ${{ secrets.DATABRICKS_URL }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
-          timeout 10 python app.py || echo "App started successfully"
+          # Run the app for 10 seconds. If it fails, the workflow will stop.
+          timeout 10 python app.py || echo "App startup test completed."
 
-      # Deploy to Hugging Face Spaces
+      # Step 6: Deploy the application to Hugging Face Spaces
       - name: Deploy to Hugging Face Spaces
         if: success()
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           HF_SPACE_REPO: ${{ secrets.HF_SPACE_REPO }}
         run: |
-          # Install huggingface_hub
-          pip install huggingface_hub
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+
+          pip install --upgrade huggingface_hub
+
           # Login to Hugging Face
-          huggingface-cli login --token $HF_TOKEN
-          # Push to HF Spaces
-          huggingface-cli repo create $HF_SPACE_REPO --type space --organization KaiSKX || true
-          git remote add space https://huggingface.co/spaces/$HF_SPACE_REPO
+          hf auth login --token $HF_TOKEN
+
+          # Create the Space repository. '--exist-ok' prevents an error if the repo already exists.
+          hf repo create ${{ secrets.HF_SPACE_REPO }} --type space --exist-ok
+
+          git remote add space https://KaiSKX:$HF_TOKEN@huggingface.co/spaces/${{ secrets.HF_SPACE_REPO }}
+
+          # Force-push the current main branch to the 'main' branch of your Space
           git push --force space main
