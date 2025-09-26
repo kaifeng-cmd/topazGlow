@@ -13,6 +13,10 @@ jobs:
     # Use the latest Ubuntu runner
     runs-on: ubuntu-latest
 
+    environment:
+      name: production
+      url: https://huggingface.co/spaces/KaiSKX/Alzheimer_Detection
+
     # Define the sequence of steps for the job
     steps:
       # Step 1: Check out the repository's code
@@ -68,10 +72,10 @@ jobs:
           # Login to Hugging Face
           hf auth login --token $HF_TOKEN
 
-          # Create the Space repository. '--exist-ok' prevents an error if the repo already exists.
+          # Create the Space repository. '--exist-ok' prevents an error if the repo already exists
           hf repo create ${{ secrets.HF_SPACE_REPO }} --repo-type=space --space_sdk=gradio --exist-ok
 
           git remote add space https://KaiSKX:$HF_TOKEN@huggingface.co/spaces/${{ secrets.HF_SPACE_REPO }}
 
-          # Force-push the current main branch to the 'main' branch of your Space
+          # Force-push the current main branch to the 'main' branch
           git push --force space main

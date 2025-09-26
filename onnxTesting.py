@@ -21,7 +21,7 @@ transform = transforms.Compose([
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 ])
 
-image = Image.open("C:/Users/dream/Downloads/test_dataset/ModerateDemented/moderateDem39.jpg").convert("RGB")
+image = Image.open("tests/data/verymildDem1462.jpg").convert("RGB")
 input_data = transform(image).unsqueeze(0).numpy().astype(np.float32)
 
 # Inference with timing

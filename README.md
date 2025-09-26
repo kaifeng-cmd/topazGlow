@@ -1,8 +1,8 @@
 ---
 title: Alzheimer Detection
-emoji: 📈
+emoji: 🧠
 colorFrom: green
-colorTo: purple
+colorTo: pink
 sdk: gradio
 sdk_version: 5.46.1
 app_file: app.py
