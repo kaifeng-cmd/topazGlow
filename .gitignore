@@ -1,6 +1,7 @@
 venv/
 .gradio/
 __pycache__/
+.pytest_cache/
 *.onnx
 modelCARD.md
 onnxUploader.py
