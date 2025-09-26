@@ -18,6 +18,8 @@ jobs:
       # Step 1: Check out the repository's code
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       # Step 2: Set up the specified Python version
       - name: Set up Python
