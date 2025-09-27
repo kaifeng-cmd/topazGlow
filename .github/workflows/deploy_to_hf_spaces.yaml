@@ -74,7 +74,7 @@ jobs:
           hf auth login --token $HF_TOKEN
 
           # Create the Space repository. '--exist-ok' prevents an error if the repo already exists
-          hf repo create ${{ secrets.HF_SPACE_REPO }} --repo-type=space --exist-ok
+          hf repo create ${{ secrets.HF_SPACE_REPO }} --repo-type=space --space_sdk=gradio --exist-ok
 
           git remote add space https://KaiSKX:$HF_TOKEN@huggingface.co/spaces/${{ secrets.HF_SPACE_REPO }}
 
