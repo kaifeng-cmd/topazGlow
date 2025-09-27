@@ -1,1 +1,2 @@
 *.ipynb filter=lfs diff=lfs merge=lfs -text
+materials/*.png filter=lfs diff=lfs merge=lfs -text
